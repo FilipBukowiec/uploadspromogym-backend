@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
-import { join } from 'path';
 import { Readable } from 'stream';
 
 @Injectable()
 export class UploadService {
     private drive;
 
-    private readonly ROOT_FOLDER_ID = '0AKCeHHZZbn2oUk9PVA';
+    private readonly ROOT_FOLDER_ID = process.env.ROOT_FOLDER_ID;
     keyJson = JSON.parse(process.env.SA_KEY_JSON as string);
 
     constructor() {
@@ -73,7 +72,7 @@ export class UploadService {
                     body: bufferStream,
                 },
                 fields: 'id, name',
-                supportsAllDrives: true,   // <-- kluczowe przy uploadzie plików
+                supportsAllDrives: true,   
             });
 
             uploadedFiles.push(res.data);
