@@ -5,20 +5,19 @@ import { memoryStorage } from 'multer';
 
 @Controller('upload')
 export class UploadController {
-  constructor(private readonly uploadService: UploadService) {}
+  constructor(private readonly uploadService: UploadService) { }
 
   @Post()
   @UseInterceptors(
-    FilesInterceptor('files', 1000, { storage: memoryStorage() }) // <-- pamięć, nie dysk
+    FilesInterceptor('files', 1000, { storage: memoryStorage() })
   )
   async uploadFiles(
     @UploadedFiles() files: Express.Multer.File[],
-    @Body() body: { type: string; date: string; city: string; clubCity: string } // dane z formularza
+    @Body() body: { type: string; date: string; city: string; clubCity: string }
   ) {
     console.log('Odebrane pliki:', files.map(f => f.originalname));
     console.log('Dane eventu:', body);
 
-    // Wywołanie serwisu do wysłania na Google Drive
     const uploadedFiles = await this.uploadService.uploadFiles(files, body);
 
     return { message: 'Pliki wysłane pomyślnie', files: uploadedFiles };

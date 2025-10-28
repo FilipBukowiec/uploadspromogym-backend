@@ -51,7 +51,8 @@ export class UploadService {
     ) {
         const dateCityName = `${eventData.date}_${eventData.city}`;
 
-        const typeFolderId = await this.createFolderIfNotExists(eventData.type, this.ROOT_FOLDER_ID);
+        const eventsFolderId = await this.createFolderIfNotExists("Events", this.ROOT_FOLDER_ID)
+        const typeFolderId = await this.createFolderIfNotExists(eventData.type, eventsFolderId);
         const dateCityFolderId = await this.createFolderIfNotExists(dateCityName, typeFolderId);
         const clubFolderId = await this.createFolderIfNotExists(eventData.clubCity, dateCityFolderId);
 

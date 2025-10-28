@@ -2,14 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { config } from 'dotenv';
 
-config(); 
+config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const ENV = process.env.APP_ENV || 'development';
-  const isDev = ENV === 'development';
-
+  const isDev = process.env.NODE_ENV !== 'production';
   const port = isDev ? 3000 : Number(process.env.PORT) || 8080;
   const frontendUrl = isDev
     ? 'http://localhost:4200'
@@ -22,7 +20,7 @@ async function bootstrap() {
   });
 
   await app.listen(port);
-  console.log(`Server running on port ${port} [${ENV}] - CORS for ${frontendUrl}`);
+  console.log(`Server running on port ${port} [${isDev ? 'development' : 'production'}] - CORS for ${frontendUrl}`);
 }
 
 bootstrap();
