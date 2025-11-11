@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
+import { fileTypeFromBuffer } from 'file-type'
 
 @Injectable()
 export class UploadService {
@@ -49,6 +50,18 @@ export class UploadService {
         files: Express.Multer.File[],
         eventData: { type: string; date: string; city: string; clubCity: string },
     ) {
+
+const allowedPrefixes=['image/', 'video/'];
+for (const file of files) {
+    const type = await fileTypeFromBuffer(file.buffer);
+    const mimeToCheck = type?.mime || file.mimetype;
+
+    const isAllowed = allowedPrefixes.some(prefix => mimeToCheck.startsWith(prefix));
+    if(!isAllowed) {
+        throw new BadRequestException(`Niedozwolony typ pliku: ${file.originalname}`)
+    }
+}
+
         const dateCityName = `${eventData.date}_${eventData.city}`;
 
         const eventsFolderId = await this.createFolderIfNotExists("Events", this.ROOT_FOLDER_ID)
